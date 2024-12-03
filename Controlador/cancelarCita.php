@@ -9,19 +9,21 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
 
-
+//Verificamos si existe una sesion
 if ($_SERVER["REQUEST_METHOD"] == "POST") 
 {
+    //Obtenemos los datos del formulario
     $idCita = $_POST['id'];
     $motivo = $_POST['motivo'];
     $Tipo = $_POST['Tipo'];
-
+    //Verificamos si es un paciente o un doctor
     if($Tipo == "Paciente")
     {
+        //Actualizamos el estado de la cita
         $update = $conn->prepare("UPDATE cita SET Estado_Cita = 'Cancelada paciente', motivo_cancelacion='$motivo' WHERE idCita = ?");
         $update->bind_param("i", $idCita);
         $update->execute();
-
+        //Obtenemos el id del paciente
         $sqlidDoctor= "SELECT Doctor_idDoctor FROM cita WHERE idCita = $idCita";
         $resultDoctor= mysqli_query($conn, $sqlidDoctor);
         $rowDoctor = $resultDoctor->fetch_assoc();
@@ -36,7 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     }
     else
     {
-        
+        //Actualizamos el estado de la cita
         $update = $conn->prepare("UPDATE cita SET Estado_Cita = 'Cancelada', motivo_cancelacion='$motivo' WHERE idCita = ?");
         $update->bind_param("i", $idCita);
         $update->execute();
@@ -54,10 +56,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 
     }
     if ($stmt==1 || $stmt==2) 
-    {
+    {   //Enviamos un correo al paciente o doctor
         $mail = new PHPMailer(true);
 
         try {
+            //Server configuraciones
             $mail->isSMTP();
             $mail->Host = 'smtp.gmail.com';
             $mail->SMTPAuth = true;
@@ -70,7 +73,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
             $mail->addAddress($correo);
             $mail->Subject = "Aviso de cancelacion de cita";
             $mail->Body = "Hola $nombre, tu cita ha sido cancelada por el siguiente motivo: $motivo";
+        
 
+            //Enviar el correo
             $mail->send();
             if($stmt==1)
             {
@@ -91,6 +96,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     {
         echo "Error en el registro: " . $stmt->error;
     }
+    //Cerramos la conexion
     $stmt->close();
     $conn->close();
 }
