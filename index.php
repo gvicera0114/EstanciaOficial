@@ -5,11 +5,13 @@ include 'Controlador/C_Usuarios.php';
 include 'Controlador/C_Doctor.php';
 include 'Controlador/C_Paciente.php';
 include 'Controlador/C_Admi.php';
-
+//include 'Controlador/C_Cita.php';
 session_start();
 
+//Controlador
 $controller = null;
 
+//Verificamos si existe un usuario 
 if (isset($_SESSION['Tipo'])) {
     
     switch ($_SESSION['Tipo']) {
@@ -30,6 +32,7 @@ if (isset($_SESSION['Tipo'])) {
     $controller = new C_Usuario($conn);
 }
 
+//llamamos a la funcion accion del controlador
 $controller->acciones();
 
 ?>
