@@ -1,0 +1,79 @@
+/* Personalización adicional */
+body {
+  background-color: rgb(255, 248, 220);
+}
+
+h1 {
+  color: #702283; /* Morado del logo */
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+h2 {
+  color: #00abe4; /* Morado del logo */
+  margin-bottom: 20px;
+}
+
+label {
+  color: #201c1c; /* Rojo del logo */
+}
+
+button {
+  background-color: #d1302f; /* Rojo del logo */
+  color: white;
+}
+
+button:hover {
+  background-color: #ff8200; /* Naranja del logo */
+}
+
+.navbar {
+  background-color: #b6e1e7;
+}
+
+.btn-Registrar {
+  padding: 15px;
+}
+
+.btn-Cancelar {
+  padding: 15px;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  gap: 15px; /* Espacio entre los botones */
+}
+
+.inactive {
+  display: none;
+}
+
+.containerCon {
+  width: 95%;
+  margin: 20px auto;
+  background-color: #e5a5a5;
+  padding: 20px;
+  border-radius: 8px;
+  display: flexbox;
+  align-content: center;
+  text-align: center;
+}
+
+.search-bar input {
+  padding: 10px;
+  margin-bottom: 3rem;
+  margin-top: 1rem;
+  width: 80%;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.tipoCon select {
+  width: 50%;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
