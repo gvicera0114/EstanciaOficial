@@ -1,25 +1,26 @@
 <?php
-
+    //Llamamos a la conexion de la base de datos
     include 'Modelo/Citas.php';
+    //Llamamos a los modelos que vamos a utilizar
     include 'Modelo/Cuestionario.php';
     include 'Modelo/Doctor.php';
     include 'Modelo/Prescripcion.php';
     include 'Modelo/Medicamento.php';
 
-
+    //Creamos la clase C_Paciente
     class C_Paciente{
 
         private $conn;
 
-
+//Creamos el constructor de la clase
         public function __construct($db){
             $this->conn = $db;
         }
 
-
+        //Creamos la funcion acciones
         public function acciones(){
             $action = isset($_GET['accion']) ? $_GET['accion'] : '';
-
+            //Creamos un switch para poder redireccionar a las funciones que vamos a utilizar
             switch ($action) {
                 case 'registroCita':
                     $this->registroCita();
@@ -48,16 +49,19 @@
             }
         }
 
+        //Creamos la funcion mostrarInicio
         private function mostrarInicio(){
             
             include 'Vista/dashboardPaciente.php';
         }
-
+        
+        //Creamos la funcion registroCita
         private function registroCita(){
             
             include 'Vista/registroCita.php';
         }
 
+        //Creamos la funcion consultarRecetas
         private function consultarRecetas(){
 
             //Creamos un modelo para poder consultar las recetas

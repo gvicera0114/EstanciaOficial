@@ -7,14 +7,16 @@ include 'Modelo/Paciente.php';
 class C_Doctor {
     private $model;
     private $conn;
-
+    //Constructor
     public function __construct($conn) {
         $this->conn = $conn;
     }
 
+    //Funciones de la clase 
     public function acciones() {
         $action = isset($_GET['accion']) ? $_GET['accion'] : '';
         
+        //Switch para determinar la acción a realizar
         switch ($action) {
             case 'consultarCitas':
                 $this->consultarCitas();
@@ -38,17 +40,19 @@ class C_Doctor {
         }
     }
 
+    //Funcion mostrar panel del doctor
     private function showDashboard() {
         
         include 'Vista/dashboardDoctor.php';
     }
 
+    //Funcion para consultar las citas del doctor
     private function consultarCitas() {
         
             
         include 'Vista/consultaCitaDoctor.php';
     }
-
+    //Funcion para consultar las recetas del doctor
     private function consultarRecetas() {
 
         //Declaramos los modelos a utilizar
@@ -69,17 +73,17 @@ class C_Doctor {
         //Recorremos las citas
         while($rowCitas = $CitasDoc->fetch_assoc()){
 
-
+            //Obtenemos los datos del paciente y del doctor
             $Paciente=$MPaciente->ConsultarPaciente($rowCitas['Paciente_idPaciente']);
             $Doctor=$MDoctor->ConsultarDoctores($rowCitas['Doctor_idDoctor']);
             $Receta=$MReceta->obtenerTodasRecetaId($rowCitas['idCita']);
 
-
+            //Recorremos las recetas
             while($RowReceta = $Receta->fetch_assoc()){
-
+                //Obtenemos los datos de la prescripcion y del medicamento
                 $ResultPrescripcion = $MPrescripcion->obtenerPrescripcionId($RowReceta['idReceta']);
                 $ResultMedicamento = $MMedicamento->ConsultarMedicamento($ResultPrescripcion['Medicamento_idMedicamento']);
-
+                //Creamos la tabla con los datos
                 $Salida.="<tr>";
                 $Salida.="<td>".$Paciente['Nombre']." </td>";
                 $Salida.="<td>".$RowReceta['Fecha_Emision']."</td>";
@@ -116,26 +120,26 @@ class C_Doctor {
         include 'Vista/consultarRecetas.php';
     }
 
-
+    //Funcion para eliminar una receta
     private function eliminarReceta() {
-        
+        //Declaramos el modelo a utilizar
         $Receta = new Receta($this->conn);
         $idReceta = $_POST['id'];
-
+        //Eliminamos la receta
         $Receta->eliminarReceta($idReceta);
 
         header("Location: index.php?accion=consultarRecetas");
   
     }
 
-
+    //Funcion para registrar una receta
     public function registrarReceta(){
-
+            //Declaramos los modelos a utilizar
         $MReceta= new Receta($this->conn);
         $MPrescripcion= new Prescripcion($this->conn);
         $MCita= new Cita($this->conn);
 
-            
+           //Obtenemos los datos de la receta 
         $idCita= $this->conn->real_escape_string($_POST['id']);
         $Nota_Doctor=$_POST['nota'];
         $FrecuenciaCardiaca=$_POST['FC'];
@@ -147,21 +151,21 @@ class C_Doctor {
         $Dosis=$_POST['dosis'];
         $Horario=$_POST['horario'];
         $Recomendaciones=$_POST['reco'];
-
+        //Insertamos la receta
         $idReceta=$MReceta->InsertarReceta($Recomendaciones,$Nota_Doctor,$TensionArterial,$FrecuenciaCardiaca,$FrecuenciaRespiratoria,$Temperatura,$Diagnostico,$idCita);
-
-        if ($Medicamento != 1) {
-
+        //Insertamos la prescripcion
+        if ($Medicamento != 1) {//Si el medicamento es diferente de 1
+            //Insertamos la prescripcion
             $MPrescripcion->InsertarPrescripcion($idReceta,$Medicamento,$Dosis,$Horario);
             
-        }else{
-            
+        }else{//Si el medicamento es igual a 1
+            //Insertamos la prescripcion
             $MPrescripcion->InsertarPrescripcion($idReceta, $Medicamento, "Ninguno", "Ninguno");
 
     
         }
 
-
+        //Actualizamos el estado de la cita
         $MCita->ActualizarCitaEstado($idCita);
 
 
@@ -175,13 +179,13 @@ class C_Doctor {
     }
 
 
-
+    //Funcion para actualizar una receta
     public function actualizarReceta(){
 
-        
+        //Declaramos los modelos a utilizar
         $MReceta= new Receta($this->conn);
         $MPrescripcion= new Prescripcion($this->conn);
-
+        //Obtenemos los datos de la receta
         $idReceta= $_POST['id'];
         $Nota_Doctor=$_POST['nota'];
         $FrecuenciaCardiaca=$_POST['FC'];
@@ -194,9 +198,9 @@ class C_Doctor {
         $Horario=$_POST['horario'];
         $Recomendaciones=$_POST['reco'];
 
-
+        //Actualizamos la receta
         $MReceta->ActualizarReceta($idReceta,$Recomendaciones,$Nota_Doctor,$TensionArterial,$FrecuenciaCardiaca,$FrecuenciaRespiratoria,$Temperatura,$Diagnostico);
-
+        //Actualizamos la prescripcion
         if ($Medicamento != 1) {
 
             $MPrescripcion->ActualizarPrescripcion($idReceta,$Medicamento,$Dosis,$Horario);
@@ -208,7 +212,7 @@ class C_Doctor {
         }
 
 
-        
+        //Redireccionamos a la vista de consultar recetas
         header("Location: index.php?accion=consultarRecetas");
 
     }

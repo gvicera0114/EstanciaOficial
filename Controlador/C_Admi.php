@@ -13,11 +13,11 @@
         }
 
 
-
+        //Funcion para redireccionar a las acciones
         public function acciones(){
 
             $op = isset($_GET['accion']) ? $_GET['accion'] : '';
-
+            //Validar si se envio un formulario
             switch($op){
                 case 'registrarUsuarios':
                     $this->registrarUsuarios();
@@ -147,17 +147,17 @@
 
         }
 
-
+        //Funcion para actualizar los datos del paciente
         public function actualizarPaciente(){
-
+            //Crear un objeto de la clase paciente
             $MPaciente= new paciente($this->conn);
-
+            //Validar si se envio un formulario
             if(isset($_GET['id'])){
-
+                //Obtener el id del paciente
                 $id=$_GET['id'];
 
 
-
+                //Consultar los datos del paciente
                 $ResultPaciente = $MPaciente->ConsultarPaciente($id);
     
                     
@@ -303,36 +303,38 @@
 
         }
 
-
+        //Funcion para eliminar un paciente
         public function eliminarPaciente(){
-
+            //Obtener el id del paciente
             $id=$_GET['id'];
-
+            //Crear un objeto de la clase paciente
             $MPaciente = new paciente($this->conn);
-            
+            //Eliminar el paciente
             $MPaciente->eliminarPaciente($id);
 
-            
+            //Redireccionar a la pagina de consulta de usuarios
             header("LOCATION: index.php?accion=consultarUsuarios");
 
 
         }
 
+        //Funcion para registrar un medicamento
 
         public function registroMedicamento(){
 
-
+            //Crear un objeto de la clase Medicamentos
             $MMedicamento = new Medicamentos($this->conn);
 
+            //Validar si se envio un formulario
             if ($_SERVER["REQUEST_METHOD"] == "POST" ) {
-            
+                //Obtener los datos del formulario
                 $nombre = $_POST["nombre"];
                 $descripcion= $_POST['descripción'];
                 $contenido= $_POST['contenido'];
                 $caducidad=$_POST["caducidad"];
-
+                //Insertar los datos en la base de datos
                 $MMedicamento->InsertarMedicamento($nombre,$descripcion,$contenido,$caducidad);
-        
+                //Redireccionar a la pagina de registro de medicamentos
             header("Location: index.php?accion=registroMedicamento");
         }
 
@@ -341,17 +343,19 @@
 
 
         }
-
+        //Funcion para consultar los medicamentos
         public function consultarMedicamento(){
-
+            //Crear un objeto de la clase Medicamentos
             $MMedicamento = new Medicamentos($this->conn);
-
+            //Consultar los medicamentos
             $result = $MMedicamento->ConsultarTodosMedicamento();
+            //Validar si hay medicamentos
+
 
             $Salida="";
-
+            
             while($row = $result->fetch_assoc()){
-
+                //Mostrar los medicamentos
                 $Salida .= "<tr>";
                 $Salida .= "<td>" . $row["idMedicamento"] . "</td>";
                 $Salida .= "<td>" . $row["Nombre"] . "</td>";
@@ -374,16 +378,16 @@
 
         }
 
-
+        //Funcion para actualizar los datos del medicamento
         public function actualizarMedicamento(){
-
+            //Crear un objeto de la clase Medicamentos
             $MMedicamento = new Medicamentos($this->conn);
-
+            //  Validar si se envio un formulario
             if(isset($_GET['id'])){
-
+                //Obtener el id del medicamento
                 $id=$_GET['id'];
                 $ResultMedicamento = $MMedicamento->ConsultarMedicamento($id);
-                   
+                //Obtener los datos del medicamento    
                     $nombre= $ResultMedicamento['Nombre'];
                     $Descripcion= $ResultMedicamento['Descripcion'];
                     $Concentracion= $ResultMedicamento['Concentracion'];
@@ -395,20 +399,20 @@
     
             }
     
-    
+            //Validar si se envio un formulario
             if(isset($_POST['actualizarMedicamento'])){
     
-                
+                //Obtener los datos del formulario
                 $id=$_GET['id'];
                 $nombre = $_POST["nombre"];
                 $Descripcion= $_POST['descripción'];
                 $contenido= $_POST['contenido'];
                 $caducidad=$_POST["caducidad"];
-              
+              //Actualizar los datos del medicamento
                 $MMedicamento->actualizarMedicamento($nombre,$Descripcion,$contenido,$caducidad,$id);
 
 
-                
+                //Redireccionar a la pagina de consulta de medicamentos
                 header("LOCATION: index.php?accion=consultarMedicamento");
         
         
@@ -422,29 +426,29 @@
         }
 
         public function eliminarMedicamento(){
-
+            //Crear un objeto de la clase Medicamentos
             $id=$_POST['id'];
-
+            //Obtener el id del medicamento
             $MMedicamento = new Medicamentos($this->conn);
-
+            //Eliminar el medicamento
             $MMedicamento->eliminarMedicamento($id);
-
+            //Redireccionar a la pagina de consulta de medicamentos
             header("LOCATION: index.php?accion=consultarMedicamento");
 
 
         }
 
-
+        //Funcion para generar reportes en PDF
         public function reportesPDF(){
-
+            //Crear un objeto de la clase PDF
             $Mpdf = new PDF($this->conn);
-
+            //Validar si se envio un formulario
             if ($_SERVER["REQUEST_METHOD"] == "POST" ) {
-                  
+             //Obtener los datos del formulario     
             $FInicio=$_POST['fechaInicio'];
             $FFin=$_POST['fechaFinal'];
             $Tipo=$_POST['tipo'];
-
+                //Generar el reporte en PDF
             $Mpdf->AddPage();
             $Mpdf->generarReporte($FInicio, $FFin, $Tipo);
             $Mpdf->Output();
@@ -459,22 +463,26 @@
 
         }
 
-
+        //Funcion para respaldar la base de datos
         public function respaldoBD(){
-
+            //Crear un objeto de la clase BD
             $MBD = new BD();
-            
+            //Validar si se envio un formulario
             if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $action = $_POST['action'];
-    
+                //Realizar la accion correspondiente
                 if ($action == 'download') {
+                    //Descargar el respaldo
                     $MBD->downloadBackup();
                 } elseif ($action == 'upload') {
+                    //Subir el respaldo
                     if (isset($_FILES['backup_file']) && $_FILES['backup_file']['error'] == UPLOAD_ERR_OK) {
+                        //Subir el archivo
                         $MBD->uploadBackup($_FILES['backup_file']['tmp_name']);
                         $message = "El archivo de respaldo se cargó correctamente.";
                         $messageType = "success";
                     } else {
+                        //Mostrar un mensaje de error
                         $message = "Error al cargar el archivo.";
                         $messageType = "danger";
                     }
@@ -482,8 +490,9 @@
             }
 
             include 'Vista/respaldoBD.php';
-            
-            if (isset($message)) {
+            //Mostrar un mensaje
+            if (isset($message)) {  
+                //Mostrar un mensaje
                 echo "<div class='alert alert-$messageType' role='alert'>$message</div>";
             }
 

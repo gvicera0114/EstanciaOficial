@@ -4,11 +4,11 @@ include 'Modelo/Usuarios.php';
 
 class C_Usuario {
     private $modelo;
-
+    //Constructor
     public function __construct($db) {
         $this->modelo = new Usuario($db);
     }
-
+    //Funcion para mostrar la vista de inicio de sesion     
     public function acciones() {
         $action = isset($_GET['action']) ? $_GET['action'] : '';
 
